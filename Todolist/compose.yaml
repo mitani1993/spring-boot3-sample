@@ -1,0 +1,11 @@
+services:
+  db:
+    image: postgres:14.2
+    environment:
+      POSTGRES_DB: db
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: pass
+    volumes:
+      - db-data:/var/lib/postgresql/data
+volumes:
+  db-data:
