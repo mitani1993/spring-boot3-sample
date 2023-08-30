@@ -7,6 +7,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -15,6 +16,7 @@ import com.example.todolist.form.TodoData;
 import com.example.todolist.repository.TodoRepository;
 import com.example.todolist.service.TodoService;
 
+import jakarta.servlet.http.HttpSession;
 import lombok.AllArgsConstructor;
 
 @Controller
@@ -22,6 +24,7 @@ import lombok.AllArgsConstructor;
 public class TodoListController {
 	private final TodoRepository todoRepository;
 	private final TodoService todoService; 
+	private final HttpSession session;
 
 
 	@GetMapping("/todo")
@@ -63,5 +66,38 @@ public class TodoListController {
 	@PostMapping("/todo/cancel")
 	public String cancel() {
 		return "redirect:/todo";
+	}
+	
+	@GetMapping("/todo/{id}")
+	public ModelAndView todoById(@PathVariable(name = "id") int id, ModelAndView mv) {
+		mv.setViewName("todoForm");
+		Todo todo = todoRepository.findById(id);
+		mv.addObject("todoData", todo);
+		session.setAttribute("mode", "update");
+		return mv;
+	}
+	
+	@GetMapping("/create")
+	public ModelAndView todoById(@PathVariable(name = "id") int id, ModelAndView mv) {
+		mv.setViewName("todoForm");
+		mv.addObject("todoData", new Todo());
+		session.setAttribute("mode", "create");
+		return mv;
+	}
+	
+	@PostMapping("/todo/update")
+	public String updateTodo(@ModelAttribute @Validated TodoData todoData, 
+			BindingResult result, ModelAndView mv) {
+		        // エラーチェック
+				boolean isValid = todoService.isValid(todoData, result); 
+				if (!result.hasErrors() && isValid) {
+					// エラーなし
+					Todo todo = todoData.toEntity(); 
+					todoRepository.saveAndFlush(todo);
+					return "redirect:/todo";
+				} else {
+					// エラーあり
+					return "todoForm";
+				}
 	}
 }
