@@ -71,14 +71,14 @@ public class TodoListController {
 	@GetMapping("/todo/{id}")
 	public ModelAndView todoById(@PathVariable(name = "id") int id, ModelAndView mv) {
 		mv.setViewName("todoForm");
-		Todo todo = todoRepository.findById(id);
+		Todo todo = todoRepository.findById(id).get();
 		mv.addObject("todoData", todo);
 		session.setAttribute("mode", "update");
 		return mv;
 	}
 	
 	@GetMapping("/create")
-	public ModelAndView todoById(@PathVariable(name = "id") int id, ModelAndView mv) {
+	public ModelAndView createTodo(@PathVariable(name = "id") int id, ModelAndView mv) {
 		mv.setViewName("todoForm");
 		mv.addObject("todoData", new Todo());
 		session.setAttribute("mode", "create");
