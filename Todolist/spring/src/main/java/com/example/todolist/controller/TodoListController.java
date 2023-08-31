@@ -28,7 +28,6 @@ public class TodoListController {
 	private final TodoService todoService; 
 	private final HttpSession session;
 
-
 	@GetMapping("/todo")
 	public ModelAndView showTodoList(ModelAndView mv) {
 		mv.setViewName("todoList");
@@ -38,28 +37,41 @@ public class TodoListController {
 		return mv;
 	}
 
+	@PostMapping("/todo/query")
+	public ModelAndView queryTodo(@ModelAttribute TodoQuery todoQuery, 
+			BindingResult result,
+			ModelAndView mv) {
+		mv.setViewName("todoList");
+		List<Todo> todoList = null;
+		if (todoService.isValid(todoQuery, result)) { 
+			// エラーが無ければ検索
+			todoList = todoService.doQuery(todoQuery); 
+		}
+		mv.addObject("todoList", todoList);
+		return mv;
+	}
+
 // 【処理 1 】 ToDo 一覧画面(todoList.html)で[新規追加]リンクがクリックされたとき
 	@GetMapping("/todo/create")
 	public ModelAndView createTodo(ModelAndView mv) {
 		mv.setViewName("todoForm"); // ①
-		mv.addObject("todoData", new TodoData()); // ②
+		mv.addObject("todoData", new TodoData()); 
+		session.setAttribute("mode", "create"); 
 		return mv;
 	}
 
 // 【処理 2 】 ToDo 入力画面(todoForm.html)で[登録]ボタンがクリックされたとき
 	@PostMapping("/todo/create")
-	public String createTodo(@ModelAttribute @Validated TodoData todoData, 
-			BindingResult result, Model model) {
+	public String createTodo(@ModelAttribute @Validated TodoData todoData, BindingResult result, Model model) {
 		// エラーチェック
-		boolean isValid = todoService.isValid(todoData, result); 
+		boolean isValid = todoService.isValid(todoData, result);
 		if (!result.hasErrors() && isValid) {
 			// エラーなし
-			Todo todo = todoData.toEntity(); 
+			Todo todo = todoData.toEntity();
 			todoRepository.saveAndFlush(todo);
 			return "redirect:/todo";
 		} else {
 			// エラーあり
-			model.addAttribute("todoData", todoData);
 			return "todoForm";
 		}
 	}
@@ -69,54 +81,34 @@ public class TodoListController {
 	public String cancel() {
 		return "redirect:/todo";
 	}
-	
+
 	@GetMapping("/todo/{id}")
 	public ModelAndView todoById(@PathVariable(name = "id") int id, ModelAndView mv) {
 		mv.setViewName("todoForm");
-		Todo todo = todoRepository.findById(id).get();
-		mv.addObject("todoData", todo);
-		session.setAttribute("mode", "update");
+		Todo todo = todoRepository.findById(id).get(); 
+		mv.addObject("todoData", todo); 
+		session.setAttribute("mode", "update"); 
 		return mv;
 	}
-	
-	@GetMapping("/create")
-	public ModelAndView createTodo(@PathVariable(name = "id") int id, ModelAndView mv) {
-		mv.setViewName("todoForm");
-		mv.addObject("todoData", new Todo());
-		session.setAttribute("mode", "create");
-		return mv;
-	}
-	
+
 	@PostMapping("/todo/update")
-	public String updateTodo(@ModelAttribute @Validated TodoData todoData, 
-			BindingResult result, ModelAndView mv) {
-		        // エラーチェック
-				boolean isValid = todoService.isValid(todoData, result); 
-				if (!result.hasErrors() && isValid) {
-					// エラーなし
-					Todo todo = todoData.toEntity(); 
-					todoRepository.saveAndFlush(todo);
-					return "redirect:/todo";
-				} else {
-					// エラーあり
-					return "todoForm";
-				}
+	public String updateTodo(@ModelAttribute @Validated TodoData todoData, BindingResult result, Model model) {
+		// エラーチェック
+		boolean isValid = todoService.isValid(todoData, result);
+		if (!result.hasErrors() && isValid) {
+			// エラーなし
+			Todo todo = todoData.toEntity();
+			todoRepository.saveAndFlush(todo); 
+			return "redirect:/todo";
+		} else {
+			// エラーあり
+			return "todoForm";
+		}
 	}
-	
+
 	@PostMapping("/todo/delete")
 	public String deleteTodo(@ModelAttribute TodoData todoData) {
 		todoRepository.deleteById(todoData.getId());
 		return "redirect:/todo";
-	}
-	
-	@PostMapping("/todo/query")
-	public ModelAndView queryTodo(@ModelAttribute TodoQuery todoQuery, BindingResult result, ModelAndView mv) {
-		mv.setViewName("todoList");
-		List<Todo> todoList = null;
-		if (todoService.isValid(todoQuery, result)) {
-			todoList = todoService.doQuery(todoQuery);
-		}
-		mv.addObject("todoQuery", todoQuery);
-		return mv;
 	}
 }
