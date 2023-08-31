@@ -100,4 +100,10 @@ public class TodoListController {
 					return "todoForm";
 				}
 	}
+	
+	@PostMapping("/todo/delete")
+	public String deleteTodo(@ModelAttribute TodoData todoData) {
+		todoRepository.deleteById(todoData.getId());
+		return "redirect:/todo";
+	}
 }
