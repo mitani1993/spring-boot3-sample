@@ -3,6 +3,7 @@ package com.example.todolist.controller;
 import java.util.List;
 
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -45,20 +46,19 @@ public class TodoListController {
 
 // 【処理 2 】 ToDo 入力画面(todoForm.html)で[登録]ボタンがクリックされたとき
 	@PostMapping("/todo/create")
-	public ModelAndView createTodo(@ModelAttribute @Validated TodoData todoData, 
-			BindingResult result, ModelAndView mv) {
+	public String createTodo(@ModelAttribute @Validated TodoData todoData, 
+			BindingResult result, Model model) {
 		// エラーチェック
 		boolean isValid = todoService.isValid(todoData, result); 
 		if (!result.hasErrors() && isValid) {
 			// エラーなし
 			Todo todo = todoData.toEntity(); 
 			todoRepository.saveAndFlush(todo);
-			return showTodoList(mv);
+			return "redirect:/todo";
 		} else {
 			// エラーあり
-			mv.setViewName("todoForm"); 
-			// mv.addObject("todoData", todoData);
-			return mv;
+			model.addAttribute("todoData", todoData);
+			return "todoForm";
 		}
 	}
 
