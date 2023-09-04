@@ -28,42 +28,42 @@ public class TodoDaoImpl implements TodoDao {
 		// 実行する JPQL の組み立て
 		// 件名
 		if (todoQuery.getTitle().length() > 0) {
-			sb.append(" and t.title like ?" + (++pos)); // ①
-			params.add("%" + todoQuery.getTitle() + "%"); // ②
+			sb.append(" and t.title like ?" + (++pos));
+			params.add("%" + todoQuery.getTitle() + "%"); 
 		}
 		// 重要度
 		if (todoQuery.getImportance() != -1) {
-			sb.append(" and t.importance = ?" + (++pos)); // ①
-			params.add(todoQuery.getImportance()); // ②
+			sb.append(" and t.importance = ?" + (++pos)); 
+			params.add(todoQuery.getImportance());
 		}
 		// 緊急度
 		if (todoQuery.getUrgency() != -1) {
-			sb.append(" and t.urgency = ?" + (++pos)); // ①
-			params.add(todoQuery.getUrgency()); // ②
+			sb.append(" and t.urgency = ?" + (++pos)); 
+			params.add(todoQuery.getUrgency()); 
 		}
 		// 期限：開始～
 		if (!todoQuery.getDeadlineFrom().equals("")) {
-			sb.append(" and t.deadline >= ?" + (++pos)); // ①
-			params.add(Utils.str2date(todoQuery.getDeadlineFrom())); // ②
+			sb.append(" and t.deadline >= ?" + (++pos)); 
+			params.add(Utils.str2date(todoQuery.getDeadlineFrom())); 
 		}
 		// ～期限：終了で検索
 		if (!todoQuery.getDeadlineTo().equals("")) {
-			sb.append(" and t.deadline <= ?" + (++pos)); // ①
-			params.add(Utils.str2date(todoQuery.getDeadlineTo())); // ②
+			sb.append(" and t.deadline <= ?" + (++pos)); 
+			params.add(Utils.str2date(todoQuery.getDeadlineTo())); 
 		}
 		// 完了
 		if (todoQuery.getDone() != null && todoQuery.getDone().equals("Y")) {
-			sb.append(" and t.done = ?" + (++pos)); // ①
-			params.add(todoQuery.getDone()); // ②
+			sb.append(" and t.done = ?" + (++pos)); 
+			params.add(todoQuery.getDone()); 
 		}
 		// order
 		sb.append(" order by id");
-		Query query = entityManager.createQuery(sb.toString()); // ③
-		for (int i = 0; i < params.size(); ++i) { // ④
+		Query query = entityManager.createQuery(sb.toString()); 
+		for (int i = 0; i < params.size(); ++i) { 
 			query = query.setParameter(i + 1, params.get(i));
 		}
 		@SuppressWarnings("unchecked")
-		List<Todo> list = query.getResultList(); // ⑤
+		List<Todo> list = query.getResultList();
 		return list;
 
 	}
