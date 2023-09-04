@@ -1,0 +1,18 @@
+{
+    "name": "remote-java",
+    "dockerComposeFile": "../compose.yaml",
+    "service": "web",
+    "workspaceFolder": "workspace",
+    "customizations": {
+        "vscode": {
+            "settings": {
+                "terminal.integrated.defaultProfile.linux": "bash"
+            },
+            "extensions": [
+                "vscjava.vscode-java-pack",
+                "pivotal.vscode-boot-dev-pack",
+                "vscjava.vscode-lombok"
+            ]
+        }
+    }
+}

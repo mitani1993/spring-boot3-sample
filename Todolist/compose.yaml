@@ -1,12 +1,11 @@
 services:
   web:
-    build: ./spring
+    image: eclipse-temurin:17
     ports:
-      - "8080:8080"
+      - "5555:5555"
     tty: true
     volumes:
-      - ./spring:/srv:cached
-    command: ["sh", "gradlew", "bootRun"]
+      - ./spring:/workspace:cached
     depends_on:
       - db
   db:
