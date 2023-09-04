@@ -12,21 +12,33 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.example.todolist.dao.TodoDaoImpl;
 import com.example.todolist.entity.Todo;
 import com.example.todolist.form.TodoData;
 import com.example.todolist.form.TodoQuery;
 import com.example.todolist.repository.TodoRepository;
 import com.example.todolist.service.TodoService;
 
+import jakarta.annotation.PostConstruct;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import jakarta.servlet.http.HttpSession;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 
 @Controller
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class TodoListController {
 	private final TodoRepository todoRepository;
 	private final TodoService todoService; 
 	private final HttpSession session;
+	@PersistenceContext
+	private EntityManager entityManager;
+	TodoDaoImpl todoDaoImpl;
+	
+	@PostConstruct
+	public void init() {
+		todoDaoImpl = new TodoDaoImpl(entityManager);
+	}
 
 	@GetMapping("/todo")
 	public ModelAndView showTodoList(ModelAndView mv) {
@@ -45,7 +57,8 @@ public class TodoListController {
 		List<Todo> todoList = null;
 		if (todoService.isValid(todoQuery, result)) { 
 			// エラーが無ければ検索
-			todoList = todoService.doQuery(todoQuery); 
+			todoList = todoService.query(todoQuery); 
+			todoList = todoDaoImpl.findByJPQL(todoQuery);
 		}
 		mv.addObject("todoList", todoList);
 		return mv;
