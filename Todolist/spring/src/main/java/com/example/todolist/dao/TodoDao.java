@@ -9,6 +9,6 @@ public interface TodoDao {
 	// JPQLによる検索
 	List<Todo> findByJPQL(TodoQuery todoQuery);
 	
-	// Criteria APIによる検索
-	List<Todo> findByCriteria(TodoQuery todoQuery);
+//	// Criteria APIによる検索
+//	List<Todo> findByCriteria(TodoQuery todoQuery);
 }

@@ -57,7 +57,7 @@ public class TodoListController {
 		List<Todo> todoList = null;
 		if (todoService.isValid(todoQuery, result)) { 
 			// エラーが無ければ検索
-			todoList = todoService.query(todoQuery); 
+			todoList = todoService.doQuery(todoQuery); 
 			todoList = todoDaoImpl.findByJPQL(todoQuery);
 		}
 		mv.addObject("todoList", todoList);
