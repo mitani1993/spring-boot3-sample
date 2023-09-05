@@ -3,6 +3,10 @@ package com.example.todolist.dao;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
+
 import com.example.todolist.common.Utils;
 import com.example.todolist.entity.Todo;
 import com.example.todolist.form.TodoQuery;
@@ -17,7 +21,7 @@ public class TodoDaoImpl implements TodoDao {
 	private final EntityManager entityManager;
 
 	@Override
-	public List<Todo> findByJPQL(TodoQuery todoQuery) {
+	public Page<Todo> findByJPQL(TodoQuery todoQuery, Pageable pageable) {
 		StringBuilder sb = new StringBuilder("select t from Todo t where 1 = 1");
 		List<Object> params = new ArrayList<>();
 		int pos = 0;
@@ -58,9 +62,12 @@ public class TodoDaoImpl implements TodoDao {
 		for (int i = 0; i < params.size(); ++i) { 
 			query = query.setParameter(i + 1, params.get(i));
 		}
+		int totalRows = query.getResultList().size();
+		query.setFirstResult(pageable.getPageNumber() * pageable.getPageSize());
+		query.setMaxResults(pageable.getPageSize());
 		@SuppressWarnings("unchecked")
-		List<Todo> list = query.getResultList();
-		return list;
+		Page<Todo> page = new PageImpl<Todo>(query.getResultList(), pageable, totalRows);
+		return page;
 
 	}
 
