@@ -32,14 +32,17 @@ public class TodoListController {
 	private final TodoRepository todoRepository;
 	private final TodoService todoService; 
 	private final HttpSession session;
+
 	@PersistenceContext
 	private EntityManager entityManager;
 	TodoDaoImpl todoDaoImpl;
-	
-	@PostConstruct
+
+	@PostConstruct 
 	public void init() {
 		todoDaoImpl = new TodoDaoImpl(entityManager);
 	}
+
+// ToDo 一覧表示(Todolist で追加)
 
 	@GetMapping("/todo")
 	public ModelAndView showTodoList(ModelAndView mv,
@@ -48,7 +51,7 @@ public class TodoListController {
 		Page<Todo> todoPage = todoRepository.findAll(pageable);
 		mv.addObject("todoQuery", new TodoQuery());
 		mv.addObject("todoPage", todoPage); 
-		mv.addObject("todoList", todoPage.getContent());
+		mv.addObject("todoList", todoPage.getContent()); 
 		session.setAttribute("todoQuery", new TodoQuery()); 
 		return mv;
 	}
@@ -64,7 +67,7 @@ public class TodoListController {
 			// エラーがなければ検索
 			todoPage = todoDaoImpl.findByJPQL(todoQuery, pageable); 
 			// 入力された検索条件を session に保存
-			session.setAttribute("todoQuery", todoQuery); 
+			session.setAttribute("todoQuery", todoQuery);
 			mv.addObject("todoPage", todoPage); 
 			mv.addObject("todoList", todoPage.getContent()); 
 		} else {
@@ -75,10 +78,22 @@ public class TodoListController {
 		return mv;
 	}
 
+	@GetMapping("/todo/query")
+	public ModelAndView queryTodo(@PageableDefault(page = 0, size = 5) Pageable pageable, ModelAndView mv) {
+		mv.setViewName("todoList");
+		// session に保存されている条件で検索
+		TodoQuery todoQuery = (TodoQuery) session.getAttribute("todoQuery");
+		Page<Todo> todoPage = todoDaoImpl.findByJPQL(todoQuery, pageable);
+		mv.addObject("todoQuery", todoQuery); // 検索条件表示用
+		mv.addObject("todoPage", todoPage); // page 情報
+		mv.addObject("todoList", todoPage.getContent()); // 検索結果
+		return mv;
+	}
+
 // 【処理 1 】 ToDo 一覧画面(todoList.html)で[新規追加]リンクがクリックされたとき
 	@GetMapping("/todo/create")
 	public ModelAndView createTodo(ModelAndView mv) {
-		mv.setViewName("todoForm"); // ①
+		mv.setViewName("todoForm"); 
 		mv.addObject("todoData", new TodoData()); 
 		session.setAttribute("mode", "create"); 
 		return mv;
