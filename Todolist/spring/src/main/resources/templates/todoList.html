@@ -6,8 +6,9 @@
 <link th:href="@{/css/style.css}" rel="stylesheet" type="text/css">
 </head>
 <body>
-  ${#locale.language}=<span th:text="${#locale.language}"></span>
   <form th:action="@{/}" method="post" th:object="${todoQuery}">
+    <!-- 操作メッセージエリア -->
+    <div th:replace="fragments :: msg_area"></div>
     <!-- 検索条件入力エリア -->
     <div style="display: flex">
       <table border="1">

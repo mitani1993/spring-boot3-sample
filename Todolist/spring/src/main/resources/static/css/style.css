@@ -42,3 +42,40 @@ button {
 #nav li {
 	margin-right: 10px;
 }
+
+.va {
+	vertical-align: middle;
+}
+
+/* information message */
+.info_msg {
+	margin-bottom: 0.75em; /*下余白*/
+	padding: 0.75em 1em; /*文字余白*/
+	width: 50%; /*幅*/
+	color: blue; /*文字色*/
+	background-color: #dfefff; /*背景色*/
+	border: 1px solid #379bff; /*線の太さ・色*/
+	border-radius: 8px; /*角の丸み*/
+}
+
+/* warning message */
+.warn_msg {
+	margin-bottom: 0.75em; /*下余白*/
+	padding: 0.75em 1em; /*文字余白*/
+	width: 50%; /*幅*/
+	color: #bd3e00; /*文字色*/
+	background-color: #ffffc6; /*背景色*/
+	border: 1px solid #ff8040; /*線の太さ・色*/
+	border-radius: 8px; /*角の丸み*/
+}
+
+/* error message */
+.err_msg {
+	margin-bottom: 0.75em; /*下余白*/
+	padding: 0.75em 1em; /*文字余白*/
+	width: 50%; /*幅*/
+	color: red; /*文字色*/
+	background-color: #ffe6e6; /*背景色*/
+	border: 1px solid #ff8080; /*線の太さ・色*/
+	border-radius: 8px; /*角の丸み*/
+}
