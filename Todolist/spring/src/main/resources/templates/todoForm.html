@@ -6,75 +6,79 @@
 <link th:href="@{/css/style.css}" rel="stylesheet" type="text/css">
 </head>
 <body>
+  <!-- 入力フォーム -->
   <form th:action="@{/}" method="post" th:object="${todoData}">
+    <!-- ToDO入力エリア -->
     <table>
-      <!-- TodoList3 で追加 開始 -->
+      <!-- id -->
       <tr>
         <th>id</th>
         <td>
           <span th:text="*{id}"></span>
+          <!-- 更新 のために必要 -->
           <input type="hidden" th:field="*{id}">
-          <!-- ① -->
         </td>
       </tr>
-      <!-- TodoList3 で追加 終了 -->
+      <!-- 件名 -->
       <tr>
-        <th>件名</th>
+        <th th:text="#{label.title}"></th>
         <td>
           <input type="text" name="title" size="40" th:value="*{title}">
           <div th:if="${#fields.hasErrors('title')}" th:errors="*{title}" th:errorclass="red"></div>
         </td>
       </tr>
+      <!-- 重要度 -->
       <tr>
-        <th>重要度</th>
-        <td>
-          <input type="radio" value="1" th:field="*{importance}">
-          高
-          <input type="radio" value="0" th:field="*{importance}">
-          低
-          <div th:if="${#fields.hasErrors('importance')}" th:errors="*{importance}" th:errorclass="red"></div>
-        </td>
+        <th th:text="#{label.importance}"></th>
+          <td>
+            <input type="radio" value="1" th:field="*{importance}">
+            <span th:text="#{radio.high}"></span>
+            <input type="radio" value="0" th:field="*{importance}">
+            <span th:text="#{radio.low}"></span>
+            <div th:if="${#fields.hasErrors('importance')}" th:errors="*{importance}" th:errorclass="red"></div>
+          </td>
       </tr>
+      <!-- 緊急度 -->
       <tr>
-        <th>緊急度</th>
+        <th th:text="#{label.urgency}"></th>
         <td>
           <select name="urgency">
-            <option value="-1" th:field="*{urgency}">選択してください</option>
-            <option value="1" th:field="*{urgency}">高</option>
-            <option value="0" th:field="*{urgency}">低</option>
+            <option value="-1" th:field="*{urgency}" th:text="#{option.none}"></option>
+            <option value="1" th:field="*{urgency}" th:text="#{option.high}"></option>
+            <option value="0" th:field="*{urgency}" th:text="#{option.low}"></option>
           </select>
           <div th:if="${#fields.hasErrors('urgency')}" th:errors="*{urgency}" th:errorclass="red"></div>
         </td>
       </tr>
+      <!-- 期限 -->
       <tr>
-        <th>期限</th>
+        <th th:text="#{label.deadline}"></th>
         <td>
           <input type="text" name="deadline" th:value="*{deadline}" placeholder="yyyy-mm-dd">
           <div th:if="${#fields.hasErrors('deadline')}" th:errors="*{deadline}" th:errorclass="red"></div>
         </td>
       </tr>
+      <!-- チェック -->
       <tr>
-        <th>チェック</th>
+        <th th:text="#{label.check}"></th>
         <td>
           <input type="checkbox" value="Y" th:field="*{done}">
-          完了
+          <span th:text="#{text.done}"></span>
           <input type="hidden" name="!done" value="N" />
-        </td>
+       </td>
       </tr>
     </table>
-    <!-- TodoList3 で変更 開始 -->
+    <!-- 更新時の操作ボタン -->
     <div th:if="${session.mode == 'update'}">
-      <!-- ② -->
-      <button type="submit" th:formaction="@{/todo/update}">更新</button>
-      <button type="submit" th:formaction="@{/todo/delete}">削除</button>
-      <button type="submit" th:formaction="@{/todo/cancel}">キャンセル</button>
+      <button type="submit" th:formaction="@{/todo/update}" th:text="#{button.update}"></button>
+      <button type="submit" th:formaction="@{/todo/delete}" th:text="#{button.delete}"></button>
+      <button type="submit" th:formaction="@{/todo/cancel}" th:text="#{button.cancel}"></button>
     </div>
+    <!-- 新規追加時の操作ボタン -->
     <div th:unless="${session.mode == 'update'}">
-      <!-- ②③ -->
-      <button type="submit" th:formaction="@{/todo/create}">登録</button>
-      <button type="submit" th:formaction="@{/todo/cancel}">キャンセル</button>
+      <button type="submit" th:formaction="@{/todo/create/do}" th:text="#{button.add}"></button>
+      <button type="submit" th:formaction="@{/todo/cancel}" th:text="#{button.cancel}"></button>
     </div>
-    <!-- TodoList3 で変更 終了 -->
   </form>
 </body>
 </html>

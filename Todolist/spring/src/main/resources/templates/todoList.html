@@ -4,105 +4,120 @@
 <meta charset="UTF-8">
 <title>ToDo List</title>
 <link th:href="@{/css/style.css}" rel="stylesheet" type="text/css">
-<!-- ③ -->
 </head>
 <body>
-  <!-- Todolist4 で追加 開始 -->
+  ${#locale.language}=<span th:text="${#locale.language}"></span>
   <form th:action="@{/}" method="post" th:object="${todoQuery}">
-    <!-- ① -->
+    <!-- 検索条件入力エリア -->
     <div style="display: flex">
       <table border="1">
         <tr>
-          <th>件名</th>
-          <th>重要度</th>
-          <th>緊急度</th>
-          <th>期限</th>
-          <th>完了</th>
+          <th th:text="#{label.title}"></th>
+          <th th:text="#{label.importance}"></th>
+          <th th:text="#{label.urgency}"></th>
+          <th th:text="#{label.deadline}"></th>
+            <th th:text="#{label.check}"></th>
         </tr>
         <tr>
+          <!-- 件名 -->
           <td>
             <input type="text" name="title" size="40" th:value="*{title}">
           </td>
+          <!-- 重要度 -->
           <td>
             <select name="importance">
               <option value="-1" th:field="*{importance}">-</option>
-              <option value="1" th:field="*{importance}">高</option>
-              <option value="0" th:field="*{importance}">低</option>
+              <option value="1" th:field="*{importance}" th:text="#{option.high}"></option>
+              <option value="0" th:field="*{importance}" th:text="#{option.low}"></option>
             </select>
           </td>
+          <!-- 緊急度 -->
           <td>
             <select name="urgency">
               <option value="-1" th:field="*{urgency}">-</option>
-              <option value="1" th:field="*{urgency}">高</option>
-              <option value="0" th:field="*{urgency}">低</option>
+              <option value="1" th:field="*{urgency}" th:text="#{option.high}"></option>
+              <option value="0" th:field="*{urgency}" th:text="#{option.low}"></option>
             </select>
           </td>
+          <!-- 期限 -->
           <td>
-            <input type="text" name="deadlineFrom" th:value="*{deadlineFrom}" size="10" placeholder="yyyy-mm-dd">
+            <input type="text" name="deadlineFrom" th:value="*{deadlineFrom}" size="10"
+              placeholder="yyyy-mm-dd">
             ～
-            <input type="text" name="deadlineTo" th:value="*{deadlineTo}" size="10" placeholder="yyyy-mm-dd">
+            <input type="text" name="deadlineTo" th:value="*{deadlineTo}" size="10"
+              placeholder="yyyy-mm-dd">
           </td>
+          <!-- 完了 -->
           <td>
-            <input type="checkbox" value="Y" th:field="*{done}">
-            完了
+            <input type="checkbox" value="Y" th:field="*{done}"><span th:text="#{text.done}"></span>
           </td>
       </table>
-      <button type="submit" th:formaction="@{/todo/query}">検索</button>
+      <!-- 検索ボタン -->
+      <button type="submit" th:formaction="@{/todo/query}" th:text="#{button.query}"></button>
     </div>
-    <div th:if="${#fields.hasErrors('deadlineFrom')}" th:errors="*{deadlineFrom}" th:errorclass="red"></div>
+    <!-- エラーメッセージエリア -->
+    <div th:if="${#fields.hasErrors('deadlineFrom')}" th:errors="*{deadlineFrom}"
+      th:errorclass="red"></div>
     <div th:if="${#fields.hasErrors('deadlineTo')}" th:errors="*{deadlineTo}" th:errorclass="red"></div>
     <hr>
-    <button type="submit" th:formaction="@{/todo/create/form}">新規追加</button>
+    <!-- 新規追加ボタン -->
+    <button type="submit" th:formaction="@{/todo/create/form}" th:text="#{button.new}"></button>
   </form>
-  <!-- Todolist4 で追加 終了 -->
-  <a th:href="@{/todo/create}">新規追加</a>
+  <!-- 検索結果エリア -->
   <table border="1">
     <tr>
       <th>id</th>
-      <th>件名</th>
-      <th>重要度</th>
-      <th>緊急度</th>
-      <th>期限</th>
-      <th>完了</th>
+      <th th:text="#{label.title}"></th>
+      <th th:text="#{label.importance}"></th>
+      <th th:text="#{label.urgency}"></th>
+      <th th:text="#{label.deadline}"></th>
+      <th th:text="#{label.check}"></th>
     </tr>
     <tr th:each="todo:${todoList}">
-      <!-- ① -->
+      <!-- id -->
       <td th:text="${todo.id}"></td>
+      <!-- 件名 -->
       <td>
         <a th:href="@{/todo/__${todo.id}__}" th:text="${todo.title}"></a>
       </td>
+      <!-- 重要度 -->
       <td th:text="${todo.importance == 1 ? '★★★':'★'}"></td>
-      <!-- ② -->
+      <!-- 緊急度 -->
       <td th:text="${todo.urgency == 1 ? '★★★':'★'}"></td>
-      <!-- ② -->
+      <!-- 期限 -->
       <td th:text="${todo.deadline}"></td>
-      <td th:text="${todo.done == 'Y' ? '完了':''}"></td>
-      <!-- ② -->
+      <!-- 完了 -->
+      <td th:text="${todo.done == 'Y' ? '__#{text.done}__' : ''}"></td>
     </tr>
   </table>
-  <div>
-    <div th:if="${todoList != null && #lists.size(todoList) != 0}">
-      <span th:text="|${todoPage.getNumber() + 1} / ${todoPage.getTotalPages()} ページを表示中|"> </span>
-      <ul id="nav">
-        <li>
-          <span th:if="${todoPage.isFirst()}">←前</span> 
-          <a th:unless="${todoPage.isFirst()}"
-            th:href="@{/todo/query(page = ${todoPage.getNumber() - 1})}">←前</a><!-- ② -->
+  <!-- ページリンク -->
+  <div th:if="${todoList != null && #lists.size(todoList) != 0}">
+    <!-- 表示ページ位置 -->
+    <span th:text="#{text.paging(${todoPage.getNumber() + 1},${todoPage.getTotalPages()})}"></span>
 
-        </li>
-        <li th:each="i : ${#numbers.sequence(0, todoPage.getTotalPages() - 1)}">
-          <span th:if="${i == todoPage.getNumber()}" th:text="${i + 1}"></span>
-           <a th:if="${i != todoPage.getNumber()}"
-            th:href="@{/todo/query(page=${i})}" th:text="${i + 1}"></a><!-- ② -->
-        </li>
-        <li>
-          <span th:if="${todoPage.isLast()}">次→</span> 
-          <a th:unless="${todoPage.isLast()}"
-            th:href="@{/todo/query(page = (${todoPage.getNumber()+ 1}))}">次→</a><!-- ② -->
-        </li>
-      </ul>
-    </div>
+    <ul id="nav">
+      <!-- ←前 -->
+      <li>
+        <span th:if="${todoPage.isFirst()}" th:text="#{link.prev}"></span>
+        <a th:unless="${todoPage.isFirst()}" 
+           th:href="@{/todo/query(page = ${todoPage.getNumber() - 1})}"
+           th:text="#{link.prev}"></a>
+      </li>
+      <!-- 1 2 3 4 5 -->
+      <li
+        th:each="i : ${#numbers.sequence(todoPage.getNumber()-2 < 0 ? 0 : todoPage.getNumber()-2, todoPage.getNumber()+2 > todoPage.getTotalPages()-1 ? todoPage.getTotalPages()-1 : todoPage.getNumber()+2)}">
+        <span th:if="${i == todoPage.getNumber()}" th:text="${i + 1}"></span>
+        <a th:unless="${i == todoPage.getNumber()}" th:href="@{/todo/query(page=${i})}"
+          th:text="${i + 1}"></a>
+      </li>
+      <!-- 次→ -->
+      <li>
+        <span th:if="${todoPage.isLast()}" th:text="#{link.next}"></span>
+        <a th:unless="${todoPage.isLast()}" 
+           th:href="@{/todo/query(page = (${todoPage.getNumber()+ 1}))}"
+           th:text="#{link.next}"></a>
+      </li>
+    </ul>
   </div>
-
 </body>
 </html>
